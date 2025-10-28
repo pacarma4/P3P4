@@ -253,6 +253,8 @@ Convierte el conjunto de datos TB en _tidy_ utilizando `gather` y `separate`.
 
 ```{r}
 
+gather(raw, key = "code",value = "cases",-country,-year) %>%
+  separate(col = code, into = c("sex","age"), sep = 1)
 ```
 
 
@@ -274,9 +276,12 @@ Para obtener la versión _tidy_ primero juntamos todos los días en una variable
 Obtén la versión _tidy_ del conjunto de datos `weather` utilizando las funciones `pivot_longer` y `pivot_wider`. Además cambiaremos las columnas `year`, `month` y `dia` por una única variable `fecha`. Para que la operación `pivot_wider` no de error tendremos que eliminar los NA's cuando usemos `pivot_longer`.
 
 ```{r}
-
+pivot_longer(raw, names_to = "dia", values_to ="value", cols = starts_with("d"), names_prefix = "d", values_drop_na = TRUE ) %>%
+  pivot_wider(names_from = element, values_from = value) %>%
+  mutate(fecha = make_date(year,month,dia))
 
 ```
+
 
 
 # DPLYR 
