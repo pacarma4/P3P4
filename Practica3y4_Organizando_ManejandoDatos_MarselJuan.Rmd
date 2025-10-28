@@ -326,7 +326,8 @@ load("./data/VuelosNY.Rdata")
 Muestra las primeras muestras de ambos data frames para hacerte una idea de las variables que contienen. ¿Qué diferencia existe entre la información mostrada en ambos data frames?
 
 ```{r }
-
+head(flights)
+head(planes)
 ```
 
 ### Ejercicio 6
@@ -337,8 +338,11 @@ En nuestro estudio queremos aplicar una serie de criterios de exclusión sobre l
 
 ```{r }
 
+planes.f <- planes %>%
+  filter(manufacturer != "MCDONELL DOUGLAS", seats>90 & seats<120) %>% 
+  mutate(manufacturer = ifelse(manufacturer=="AIRBUS","AIRBUS COMP",manufacturer))
 
-
+planes.f
 ```
 
 
@@ -347,8 +351,10 @@ En nuestro estudio queremos aplicar una serie de criterios de exclusión sobre l
 Crea un data frame denominado `flights.f` que contenga los vuelos que involucren a los aviones presentes en el data frame `planes.f`. Para ello utiliza algunas de las funciones de **XXX_join** y la variable `tailnum` que es común en ambos data frames. 
 
 ```{r }
+flights.f <- flights %>%
+  inner_join(planes.f, by='tailnum')
 
-
+flights.f
 ```
 
 ### Ejercicio 8
@@ -356,7 +362,8 @@ Crea un data frame denominado `flights.f` que contenga los vuelos que involucren
 Reasigna los nombres de los data frames `planes.f` y `flights.f` a los nombres originales  `planes` y `flights`.
 
 ```{r }
-
+planes <- planes.f
+flights <- flights.f
 ```
 
 
@@ -368,7 +375,8 @@ Existen variables que, a priori, no tienen demasiado interés para el estudio qu
 * En el data frame  `planes` quédate con todas las variables excepto `speed` y `type`.
 
 ```{r }
-
+flights<-flights %>% select(!ends_with("time"), -"time_hour")
+planes<-planes %>% select(!c(speed,type))
 ```
 
 ### Ejercicio 10
@@ -376,7 +384,7 @@ Existen variables que, a priori, no tienen demasiado interés para el estudio qu
 Incorpora una nueva variable a `flights` denominado `Full_Date` que sea de tipo `character` que incorpore una cadena de texto de la forma `d-m-Y`. Donde `d` indica día, `m` mes e `Y` año, a partir de la información incluida en el data frame. Utiliza una función de **DPLYR** que permita conseguir este propósito. Elimina las variables originales involucradas en la creación de la nueva variable.
 
 ```{r }
-
+flights %>% mutate("Full_Date" = paste(day, month, year.x, sep ="-")) %>% select(-day,-month,-year.x)
 
 ```
 
